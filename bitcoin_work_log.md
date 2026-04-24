@@ -32,3 +32,4 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 - Rewritten the bip324-mit library using a more structured state machine: https://github.com/RazorBest/bip324-mitm/pull/10
 - Catch the errors in the python scripts of the main repo that kept crashing the docker containers: https://github.com/RazorBest/bip324-traffic-analysis/pull/16; https://github.com/RazorBest/bip324-traffic-analysis/pull/15.
 - Decrease the storage used by Prometheus by limiting it to 5 days: https://github.com/RazorBest/bip324-traffic-analysis/pull/14
+- 24.04.2026 - Reviewed https://github.com/RazorBest/bip324-mitm/pull/10
