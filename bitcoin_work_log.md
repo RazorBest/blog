@@ -20,6 +20,8 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 ## Reviews for peer-observer
 - https://github.com/peer-observer/peer-observer/pull/386
 - https://github.com/peer-observer/peer-observer/pull/383
+- 26.04.2026 - Reviewed https://github.com/peer-observer/peer-observer/pull/373
+- 27.04.2026 - Reviewed https://github.com/peer-observer/peer-observer/pull/418
 
 ## Discovered issues
 - Opened an issue in libbpf-rs after discovering a use-after-free bug when working on the ebpf extractor of peer-observer: https://github.com/libbpf/libbpf-rs/issues/1381
