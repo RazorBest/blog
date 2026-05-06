@@ -135,9 +135,11 @@ increase(v[range]) = (vn - v1) * factor
 Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its sweeped increase.
 
 Here's a cheat sheet with some common patterns:
-![Increase cheat sheet](img/increase_cheat_sheet.png)
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_cheat_sheet.png" style="width:60%; height:auto;" alt="Increase cheat sheet">
+</div>
 
-One noticeable features is that the slopes of the increases seems to be preserved in the increase plot. But not necessarily the length. That's because when a counter has a constant slope for a long enough time, the increase becomes constant. Remember that the increase function is trying to act like a derivative, so that shouldn't be a surprise.
+One noticeable feature is that the slopes of the increases seems to be preserved in the increase plot. But not necessarily the length. That's because when a counter has a constant slope for a long enough time, the increase becomes constant. Remember that the increase function is trying to act like a derivative, so that shouldn't be a surprise.
 
 The more complex behaviour can be seen when the counter is updating its slope within a short amount of time. It seems that there is a cummulative effect, but only when the changes in the slope are close enough.
 
