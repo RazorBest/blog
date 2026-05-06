@@ -132,7 +132,59 @@ increase(v[range]) = (vn - v1) * factor
 
 ## Building the intuition
 
-Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it.
+Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its sweeped increase.
 
-Cheat sheet:
+Here's a cheat sheet with some common patterns:
 ![Increase cheat sheet](img/increase_cheat_sheet.png)
+
+One noticeable features is that the slopes of the increases seems to be preserved in the increase plot. But not necessarily the length. That's because when a counter has a constant slope for a long enough time, the increase becomes constant. Remember that the increase function is trying to act like a derivative, so that shouldn't be a surprise.
+
+The more complex behaviour can be seen when the counter is updating its slope within a short amount of time. It seems that there is a cummulative effect, but only when the changes in the slope are close enough.
+
+Finally, there is also a pull-back after some time. Whenever the counter becomes constant, the `increase` plot thrives back to 0. There is some symmetry: the descent has the same shape as the descent. Why?
+
+Now that you know the mathematical expression for `increase`, you might already have an idea to why the plots look like that. In the following sections, I'll try to explain these features.
+
+## They're all just differences
+
+This is how a sweeped `increase` works: you fix a time interval, D. You treat your counter plot as an X-Y coordinate plot. You start with two points on the plot whose x values are D seconds appart. You record the difference in the y values. You shift both points by an increment. Then you record the difference again and repeat.
+
+You can imagine those two points at fixed distance moving continuously from one end of the plot to the other. I would've showed you a cool animation but I don't have one (contact me if you want to do it, I'd be happy to include it here).
+
+If the sample rate is constant and small, then you'll have a nice property: the `factor` used in the formula will roughly be the same, because the `range` is shifted in both ends, keeping `rangeEnd - rangeStart` constant. Then, looking at the extrapolated timestamps: `t1'` , `tn'`, the difference `tn' - t1'` will be a constant factor of `rangeEnd - rangeStart`. However, this approximation becaomes weaker, the lower the sample rate is.
+
+If the `factor` is roughly the same, then the ENTIRE plot of increase will be a factor of all the registered differences. This means that if the increase has value 1 at t=1h, and value 3 at t=2h, it means that at t=2h the counter increased three times as much as it increased at t=1h. The power of the `increase` function comes when you compare values from different times.
+
+## Blips
+
+Let's look at a simple pattern: an instant ascend followed by a plateau.
+
+The actual counter (`increase` was not applied):
+![Counter with instant increase](img/counter3.png)
+
+I'm claiming that the `increase` plot for this counter will look like a "blip" - something that increases rapidly and decreases rapidly after a short period of time.
+
+I will try to convince you why is that, by looking at a continuous approximation of the counter above.
+
+The following plot is arctan with a scaling factor (in red) and its derivative (in blue):
+![Arctan and its derivative](img/arctan.png)
+
+The derivative looks like a blip. Actually, if I increase the scaling factor, the slope in arctan will become more abrupt, and the blip will become thinner and longer. Here you can play with this on Desmos: https://www.desmos.com/calculator/brieb8qiay.
+
+But you might say: the actual `increase` plot looks more like a "blop" and less like a "blip". It waits some time until it decreases again:
+![Increase with 30m of counter](img/increase3.png)
+
+That's where the `increase` stops being a derivative, and starts being a difference. The length of the "blop" depends on the time interval in the range. For the plot above I used `increase(counter[30m])`. It's not a coincidence that for a length of 30m stays on "high".
+
+If we use a 3m range instead of 30m, we get the following `increase` plot:
+![A blip](img/blip.png)
+
+This is more like a blip, right? From now on, I will refer to all of them as blips, no matter how long they are. You just have to remember that the blips would become visible if we make the query range very small.
+
+There's also a mathematical way to compute differences in a similar way `increase` does. You do `f(x) - f(x - b)`, where `b` is the length of the range. Here you can play with it on Desmos: https://www.desmos.com/calculator/0qa7iqvucy.
+
+## The hidden plateau
+
+Cool, so instant changes crate the following pattern: instant increase, followed by a plateau whose length depends on the range, then instant decrease.
+
+Let's now look at a gradual change:
