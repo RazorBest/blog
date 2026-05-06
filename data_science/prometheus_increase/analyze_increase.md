@@ -139,7 +139,7 @@ Here's a cheat sheet with some common patterns:
     <img src="img/increase_cheat_sheet.png" style="width:60%; height:auto;" alt="Increase cheat sheet">
 </div>
 
-One noticeable feature is that the slopes of the increases seems to be preserved in the increase plot. But not necessarily the length. That's because when a counter has a constant slope for a long enough time, the increase becomes constant. Remember that the increase function is trying to act like a derivative, so that shouldn't be a surprise.
+One noticeable feature is that the slopes of the ascensions seem to be preserved in the increase plot. But not necessarily the length. That's because when a counter has a constant slope for a long enough time, the increase becomes constant. Remember that the increase function is trying to act like a derivative, so that shouldn't be a surprise.
 
 The more complex behaviour can be seen when the counter is updating its slope within a short amount of time. It seems that there is a cummulative effect, but only when the changes in the slope are close enough.
 
@@ -162,24 +162,32 @@ If the `factor` is roughly the same, then the ENTIRE plot of increase will be a 
 Let's look at a simple pattern: an instant ascend followed by a plateau.
 
 The actual counter (`increase` was not applied):
-![Counter with instant increase](img/counter3.png)
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter3.png" style="width:600px; height:auto;" alt="Counter with instant increase">
+</div>
 
 I'm claiming that the `increase` plot for this counter will look like a "blip" - something that increases rapidly and decreases rapidly after a short period of time.
 
 I will try to convince you why is that, by looking at a continuous approximation of the counter above.
 
 The following plot is arctan with a scaling factor (in red) and its derivative (in blue):
-![Arctan and its derivative](img/desmos_arctan.svg)
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/desmos_arctan.png" style="width:600px; height:auto;" alt="Arctan and its derivative">
+</div>
 
 The derivative looks like a blip. Actually, if I increase the scaling factor, the slope in arctan will become more abrupt, and the blip will become thinner and longer. Here you can play with this on Desmos: https://www.desmos.com/calculator/brieb8qiay.
 
 But you might say: the actual `increase` plot looks more like a "blop" and less like a "blip". It waits some time until it decreases again:
-![Increase with 30m of counter](img/increase3.png)
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase3.png" style="width:600px; height:auto;" alt="Increase with 30m of counter">
+</div>
 
 That's where the `increase` stops being a derivative, and starts being a difference. The length of the "blop" depends on the time interval in the range. For the plot above I used `increase(counter[30m])`. It's not a coincidence that for a length of 30m stays on "high".
 
 If we use a 3m range instead of 30m, we get the following `increase` plot:
-![A blip](img/blip.png)
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/blip.png" style="width:600px; height:auto;" alt="Increase with 30m of counter">
+</div>
 
 This is more like a blip, right? From now on, I will refer to all of them as blips, no matter how wide they are. You just have to remember that the blips would become visible if we make the query range very small.
 
