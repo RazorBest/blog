@@ -167,7 +167,7 @@ I'm claiming that the `increase` plot for this counter will look like a "blip" -
 I will try to convince you why is that, by looking at a continuous approximation of the counter above.
 
 The following plot is arctan with a scaling factor (in red) and its derivative (in blue):
-![Arctan and its derivative](img/arctan.png)
+![Arctan and its derivative](img/desmos_arctan.svg)
 
 The derivative looks like a blip. Actually, if I increase the scaling factor, the slope in arctan will become more abrupt, and the blip will become thinner and longer. Here you can play with this on Desmos: https://www.desmos.com/calculator/brieb8qiay.
 
@@ -179,7 +179,7 @@ That's where the `increase` stops being a derivative, and starts being a differe
 If we use a 3m range instead of 30m, we get the following `increase` plot:
 ![A blip](img/blip.png)
 
-This is more like a blip, right? From now on, I will refer to all of them as blips, no matter how long they are. You just have to remember that the blips would become visible if we make the query range very small.
+This is more like a blip, right? From now on, I will refer to all of them as blips, no matter how wide they are. You just have to remember that the blips would become visible if we make the query range very small.
 
 There's also a mathematical way to compute differences in a similar way `increase` does. You do `f(x) - f(x - b)`, where `b` is the length of the range. Here you can play with it on Desmos: https://www.desmos.com/calculator/0qa7iqvucy.
 
