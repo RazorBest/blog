@@ -232,7 +232,7 @@ If you keep increasing the range, the plateau will get smaller and smaller. If y
     <img src="img/hidden_plateau.svg" style="width:600px; height:auto;" alt="Increase[10m] with 1m of counter">
 </div>
 
-And now, it actually increases as we increase the range. But its length is not equal to range. What actually was happening before was that the `increase` plot was trying to catch the counter plot. But, because the endpoints of the range were to close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. When the range is large enough, the ascension will be preserved in its entirety.
+And now, it actually increases as we increase the range. But its length is not equal to the range. What actually was happening before was that the `increase` plot was trying to catch up the counter plot. But, because the endpoints of the range were too close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. However, if the range is large enough, the ascension will be preserved in its entirety.
 
 In fact, if the range is big enough, then `range length = length of ascension + length of plateau (in increase)`.
 
