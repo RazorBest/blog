@@ -163,7 +163,7 @@ Let's look at a simple pattern: an instant ascend followed by a plateau.
 
 The actual counter (`increase` was not applied):
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/counter3.svg" style="width:600px; height:auto;" alt="Counter with instant increase">
+    <img src="img/counter_generate_counter1.svg" style="width:600px; height:auto;" alt="Counter with instant increase">
 </div>
 
 I'm claiming that the `increase` plot for this counter will look like a "blip" - something that increases rapidly and decreases rapidly after a short period of time.
@@ -179,14 +179,14 @@ The derivative looks like a blip. Actually, if I increase the scaling factor, th
 
 But you might say: the actual `increase` plot looks more like a "blop" and less like a "blip". It waits some time until it decreases again:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase3.svg" style="width:600px; height:auto;" alt="Increase with 30m of counter">
+    <img src="img/increase_generate_counter1.svg" style="width:600px; height:auto;" alt="Increase with 30m of counter">
 </div>
 
 That's where the `increase` stops being a derivative, and starts being a difference. The length of the "blop" depends on the time interval in the range. For the plot above I used `increase(counter[30m])`. It's not a coincidence that for a length of 30m the line stays on "high".
 
 If we use a 1m range instead of 30m, we get the following `increase` plot:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/blip.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
+    <img src="img/blip_generate_counter1.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
 </div>
 
 This is more like a blip, right? From now on, I will refer to all of them as blips, no matter how wide they are. You just have to remember that the blips would become visible if we make the query range very small.
