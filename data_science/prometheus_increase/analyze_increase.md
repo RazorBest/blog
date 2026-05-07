@@ -172,7 +172,7 @@ I will try to convince you why is that, by looking at a continuous approximation
 
 The following plot is arctan with a scaling factor (in red) and its derivative (in blue):
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/desmos_arctan.png" style="width:600px; height:auto;" alt="Arctan and its derivative">
+    <img src="img/desmos_arctan.svg" style="width:600px; height:auto;" alt="Arctan and its derivative">
 </div>
 
 The derivative looks like a blip. Actually, if I increase the scaling factor, the slope in arctan will become more abrupt, and the blip will become thinner and longer. Here you can play with this on Desmos: https://www.desmos.com/calculator/brieb8qiay.
