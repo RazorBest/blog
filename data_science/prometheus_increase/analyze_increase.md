@@ -240,21 +240,21 @@ In fact, if the range is big enough, then `range length = length of ascension + 
 
 
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/counter_fast.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/counter_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_fast.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/increase_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_fast_10m.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/increase_10m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_fast_60m.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/increase_60m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_fast_140m.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/increase_140m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
