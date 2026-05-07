@@ -198,3 +198,11 @@ There's also a mathematical way to compute differences in a similar way `increas
 Cool, so instant changes crate the following pattern: instant increase, followed by a plateau whose length depends on the range, then instant decrease.
 
 Let's now look at a gradual change:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_slow_increase.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
+</div>
+
+This is how the increase looks:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_slow_increase.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
+</div>
