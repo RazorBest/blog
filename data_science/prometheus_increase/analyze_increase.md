@@ -248,8 +248,14 @@ And this is how `increase` looks:
     <img src="img/increase_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
+This time, the slopes of `increase` look a little more interesting. If I weren't measuring, I might've thought that they're the same as in the counter.
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/increase_10m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+Here's the same plot where `increase` is shifted up. The slopes are almost identical, but not exactly:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_shifted_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 <div style="display:flex; justify-content:flex-start;">
