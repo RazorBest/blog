@@ -238,12 +238,12 @@ In fact, if the range is big enough, then `range length = length of ascension + 
 
 ## Fast changes
 
-Let's now look at a series of quick changes in the slope.
-
+Let's now look at a series of quick changes in the slope:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/counter_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
+And this is how `increase` looks:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/increase_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
