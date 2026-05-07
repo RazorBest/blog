@@ -274,7 +274,7 @@ With 140m range:
 
 Prepare to go deep now.
 
-Let's take a step back and look again at an instant value in `increase`:
+Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/fast_increase_instant.svg" style="width:600px; height:auto;" alt="">
 </div>
