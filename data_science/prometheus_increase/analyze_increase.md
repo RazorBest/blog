@@ -195,14 +195,43 @@ There's also a mathematical way to compute differences in a similar way `increas
 
 ## The hidden plateau
 
-Cool, so instant changes crate the following pattern: instant increase, followed by a plateau whose length depends on the range, then instant decrease.
+Cool, so instant changes create the following pattern: instant increase, followed by a plateau whose length depends on the range, then instant decrease.
 
 Let's now look at a gradual change:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/counter_slow_increase.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
+    <img src="img/counter_slow_increase.svg" style="width:600px; height:auto;" alt="Counter with a slow change">
 </div>
 
 This is how the increase looks:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_slow_increase.svg" style="width:600px; height:auto;" alt="Increase with 1m of counter">
+    <img src="img/increase_slow_increase.svg" style="width:600px; height:auto;" alt="Increase of counter with a slow change">
 </div>
+
+Well, I'd say it still looks like a blip: an increase followed by a plateau, followed by a decrease. But the increase is not instant. Actually the slope of the increase is the almost same as the slop of the ascension. It turns out that this is not a coincidence. The math can confirm this.
+
+You can observer that the decrease in the increase (can you still follow?) stars happening when the counter becomes constant. This happens for the same reason the decrease happened in the previous case where we learned about blips. Similarly, it can be shown that the slope of the decrease is the same as the slope of the increase (but reversed).
+
+But, there's something different from the previous blips? The plateau.
+
+Here's the `increase` plot for the same counter, but with a 60m range, instead of 30m:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_slow_increase_60m.svg" style="width:600px; height:auto;" alt="Increase[60m] of counter with a slow change">
+</div>
+
+Do you see the problem? We've previously seen that the length of the plateau was matching the length of the range. But now, the plateau is shorter, despite the fact that we increased the query range?
+
+Similarly, if we decrease the range to 10m, we get a longer plateau:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_slow_increase_10m.svg" style="width:600px; height:auto;" alt="Increase[10m] with 1m of counter">
+</div>
+
+On the other hand, the more you increase the range, the longer gets the ascension. It looks like the `increase` plot is trying to look closer like the counter plot.
+
+If you keep increasing the range, the plateau will get smaller and smaller. If you get past that, a new plateau appears. This is how it looks for a 140m range:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/hidden_plateau.svg" style="width:600px; height:auto;" alt="Increase[10m] with 1m of counter">
+</div>
+
+And now, it actually increases as we increase the range. But its length is not equal to range. What actually was happening before was that the `increase` plot was trying to catch the counter plot. But, because the endpoints of the range were to close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. When the range is large enough, the ascension will be preserved in its entirety.
+
+In fact, if the range is big enough, then `range length = length of ascension + length of plateau (in increase)`.
