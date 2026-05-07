@@ -235,3 +235,26 @@ If you keep increasing the range, the plateau will get smaller and smaller. If y
 And now, it actually increases as we increase the range. But its length is not equal to range. What actually was happening before was that the `increase` plot was trying to catch the counter plot. But, because the endpoints of the range were to close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. When the range is large enough, the ascension will be preserved in its entirety.
 
 In fact, if the range is big enough, then `range length = length of ascension + length of plateau (in increase)`.
+
+## Fast changes
+
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_fast.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_fast.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_fast_10m.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_fast_60m.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_fast_140m.svg" style="width:600px; height:auto;" alt="">
+</div>
