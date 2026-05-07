@@ -229,7 +229,7 @@ On the other hand, the more you increase the range, the longer gets the ascensio
 
 If you keep increasing the range, the plateau will get smaller and smaller. If you get past that, a new plateau appears. This is how it looks for a 140m range:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_140_generate_slow_increase.svg" style="width:600px; height:auto;" alt="Increase[10m] of counter">
+    <img src="img/increase_140m_generate_slow_increase.svg" style="width:600px; height:auto;" alt="Increase[140m] of counter">
 </div>
 
 And now, it actually increases as we increase the range. But its length is not equal to the range. What actually was happening before was that the `increase` plot was trying to catch up the counter plot. But, because the endpoints of the range were too close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. However, if the range is large enough, the ascension will be preserved in its entirety.
