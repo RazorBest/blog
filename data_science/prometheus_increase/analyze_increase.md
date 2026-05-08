@@ -274,7 +274,54 @@ With 140m range:
 
 Prepare to go deep now.
 
-Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`:
+Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`. The following plot represents the endpoints of the range through the orange circle:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/fast_increase_instant.svg" style="width:600px; height:auto;" alt="">
 </div>
+
+As you move the 2 endpoitns across the counter, you trace the `increase`. If these 2 endpoints stay on the same slopes, the resulting trace in `increase` will be a straight line. The slope of this new line is the difference between the slope on which the right endpoint sits and the slope on which the left endpoint sits. Another way to think about this is that the slope of the `increase` is encoded in its derivative, just like `increase` is kind of the derivative of the counter. Then, the slope of the `increase` could be described by the increase of the increase of the counter.
+
+Why am I telling you this? Because the `increase` changes its slope exactly when one of the endpoints jumps on a new slope. If you're still not convinced, here's the proof:
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/proof_slope.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+```
+Let a counter have two slopes (i.e. two intervals where each interval can be described by a line), with values s1 and s2.
+Let's look at two points in the increase: at timestamp t2 and t4.
+
+Let range1 and range2 be two different ranges with the same length, where range2 is range1 shifted to the right by a variable d.
+
+Let (v1, t1) and (v2, t2) be the first and last points in v[range1].
+Let (v3, t3) and (v4, t4) be the first and last points in v[range2].
+
+(1) The ranges are chosen such that, always, the left endpoint sits on the first slope (s1) and the right endpoint sits on the second slope (s2).
+
+(2) Assume that the sample rate is constant, and divides d. Then, we can safely assume that t3 - t1 = d and t4 - t2 = d.
+
+(3) Assume that for both increase(v[range1]) and increase(v[range2]), the factor is 1.
+
+We need to show that the slope of the increase, S = (increase(v[range2]) - increase(v[range1])) / (t4 - t2)  depends only on the two slopes.
+
+Now, we can begin the proof:
+
+From (3):
+increase(v[range1]) = v2 - v1
+increase(v[range2]) = v4 - v3
+
+From (1), we know that (v1, t1) and (v3, t3) are on the s1 slope. Similarly, (v2, t2) and (v4, t4) are on the s2 slope.
+This means:
+(v3 - v1) / (t3 - t1) = s1
+(v4 - v2) / (t4 - t2) = s2
+
+From (2):
+(v3 - v1) / d = s1 => v3 - v1 = s1 * d
+(v4 - v2) / d = s2 => v4 - v2 = s2 * d
+
+S = (increase(v[range2]) - increase(v[range1])) / (t4 - t2) = ((v4 - v3) - (v2 - v1)) / d
+  = ((v4 - v2) - (v3 - v1)) / d = (s2 * d - s1 * d) / d
+  = s2 - s1
+
+qed
+```
