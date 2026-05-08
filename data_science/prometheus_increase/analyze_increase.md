@@ -1,8 +1,12 @@
-# Analyzing the increase function of Prometheus
+# Increase your understanding of Prometheus increase()
 
 This article attempts to explain how the `increase` function of Prometheus works, and how to get an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
 
-When I first used `increase`, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafan plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a better understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
+When I first used `increase`, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a better understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
+
+P.S. `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same functions. A lot of the stuff in here also applies to the other functions.
+
+## RTFM
 
 [The documentation](https://prometheus.io/docs/prometheus/latest/querying/functions/#increase) for the function states:
 > increase(v range-vector) calculates the increase in the time series in the range vector. Breaks in monotonicity (such as counter resets due to target restarts) are automatically adjusted for. The increase is extrapolated to cover the full time range as specified in the range vector selector, so that it is possible to get a non-integer result even if a counter increases only by integer increments.
@@ -274,12 +278,12 @@ With 140m range:
 
 Prepare to go deep now.
 
-Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`. The following plot represents the endpoints of the range through the orange circle:
+Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`. The following plot represents the endpoints of the range with orange circles:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/fast_increase_instant.svg" style="width:600px; height:auto;" alt="">
 </div>
 
-As you move the 2 endpoitns across the counter, you trace the `increase`. If these 2 endpoints stay on the same slopes, the resulting trace in `increase` will be a straight line. The slope of this new line is the difference between the slope on which the right endpoint sits and the slope on which the left endpoint sits. Another way to think about this is that the slope of the `increase` is encoded in its derivative, just like `increase` is kind of the derivative of the counter. Then, the slope of the `increase` could be described by the increase of the increase of the counter.
+As you move the 2 endpoints across the counter, you trace the `increase`. If these 2 endpoints stay on the same slopes, the resulting trace in `increase` will be a straight line. The slope of this new line is the difference between the slope on which the right endpoint sits and the slope on which the left endpoint sits. Another way to think about this is that the slope of the `increase` is encoded in its derivative, just like `increase` is kind of the derivative of the counter. Then, the slope of the `increase` could be described by the increase of the increase of the counter.
 
 Why am I telling you this? Because the `increase` changes its slope exactly when one of the endpoints jumps on a new slope. If you're still not convinced, here's the proof:
 
@@ -325,3 +329,33 @@ S = (increase(v[range2]) - increase(v[range1])) / (t4 - t2) = ((v4 - v3) - (v2 -
 
 qed
 ```
+
+Here are all the slopes in `increase` and from which pairs of slopes in the counter they come from:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference1.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference2.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference3.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference4.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference5.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference6.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference7.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference8.svg" style="width:600px; height:auto;" alt="">
+</div>
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/progressive_difference9.svg" style="width:600px; height:auto;" alt="">
+</div>
+
