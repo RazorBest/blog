@@ -370,3 +370,11 @@ This one is a bonus
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/blip_meme.jpg" style="width:600px; height:auto;" alt="">
 </div>
+
+I showed you two ways to interpret the plot of `increase`: through blips and through slopes. The blips idea assumed that for each instant change we have a spike in the `increase` plot. And the width of this "spike" depended on the range of the query. The slopes idea treated the counter like a continuous function, and interpreted `increase` as a difference between the slopes in two points in the counter. But in reality, the function was never continuous - it was our interpretation, to have an easier understanding of the plot. What happens if we apply the blips interpretation to our previous plot?
+
+We know that the blips become spiky when we make query range very small. So, let's try a 10s range query. I also multiplied the expression by 10 to make it look nice on the plot:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_10s_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
+
