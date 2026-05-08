@@ -261,20 +261,7 @@ Here's the same plot where `increase` is shifted up. The slopes are almost ident
 
 The second and third slopes in `increase` are smaller by 1, comapared to the ones in the counter, and this is not a conincidence. Then, we have a fake plateau, and the same slopes, but negative, and in a different order.
 
-This one really depends on the chosen range. If you plugin in the formula and sweep the ends of the range across the counter, you'll see why this happens. Before diving deep into it, I'm going to show how `increase` looks with other ranges, but not dive deep into those particular ones. Hopefully you already got used to the fact that, the bigger the range is, the bigger `increase` will look. It's like a baloon that gets inflated.
-
-With 10m range:
-<div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_10m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
-</div>
-With 60m range:
-<div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_60m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
-</div>
-With 140m range:
-<div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase_140m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
-</div>
+This one really depends on the chosen range. If you plugin in the formula and sweep the ends of the range across the counter, you'll see why this happens.
 
 Prepare to go deep now.
 
@@ -359,3 +346,27 @@ Here are all the slopes in `increase` and from which pairs of slopes in the coun
     <img src="img/progressive_difference9.svg" style="width:600px; height:auto;" alt="">
 </div>
 
+---
+
+This how `increase` looks with other ranges, without going deep into them. Hopefully you already got used to the fact that, the bigger the range is, the bigger `increase` will look. It's like a baloon that gets inflated.
+
+With 10m range:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_10m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
+With 60m range:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_60m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
+With 140m range:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_140m_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+## Back to blips
+
+This one is a bonus
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/blip_meme.jpg" style="width:600px; height:auto;" alt="">
+</div>
