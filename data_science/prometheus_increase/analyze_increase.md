@@ -373,8 +373,46 @@ This one is a bonus
 
 I showed you two ways to interpret the plot of `increase`: through blips and through slopes. The blips idea assumed that for each instant change we have a spike in the `increase` plot. And the width of this "spike" depended on the range of the query. The slopes idea treated the counter like a continuous function, and interpreted `increase` as a difference between the slopes in two points in the counter. But in reality, the function was never continuous - it was our interpretation, to have an easier understanding of the plot. What happens if we apply the blips interpretation to our previous plot?
 
-We know that the blips become spiky when we make query range very small. So, let's try a 10s range query. I also multiplied the expression by 10 to make it look nice on the plot:
+We know that the blips become spiky when we make the query range very small. So, let's try a 10s range query. I also multiplied the expression by 10 to make it look nice:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/increase_10s_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
+Cool, so the height of the blips scales with the slopes of the counter. But how do these blips turn into the smoother hill that we see at 30m? To understand this, we'll look at one last example.
+
+
+Here we have 2 instant changes that are 10 minutes apart followed by 2 instant changes that are 30 minutes apart:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_generate_counter5.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+And the `increase` plot:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_generate_counter5.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+In the first half, the blips stack on each other. In the second half, they are far enough to be separated.
+
+Here's the same plot where I colored each blip with a different color. You can clearly see where they stack:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_stacked.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+Cool! So, as the blips get wider they start stacking on each other. This shows us an underlying property of `increase`: the function is greater when the range is greater.
+
+Now, back to the previous counter. This is what happens when we increse the range from <> to <>:
+
+INSERT IMAGE HERE
+
+I personally didn't find this too satisfying. All the blips merge at the same time. So, here's a different plot where the gap between the changes is modeled by a quadratic function:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_generate_counter11.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+And its 30m `increase`:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_generate_counter11.svg" style="width:600px; height:auto;" alt="">
+</div>
+
+Here's an animation that varies the query range and shows how the blips start stacking on each other:
+[Watch video](img/animation.mp4)
