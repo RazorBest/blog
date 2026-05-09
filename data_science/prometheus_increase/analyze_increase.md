@@ -1,8 +1,8 @@
 # Increase your understanding of Prometheus increase()
 
-This article attempts to explain how the `increase` function of Prometheus works, and about forming an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
+This article attempts to explain how the `increase` function of Prometheus works, and how to form an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
 
-Usually, `increase` is used whenever you have a monotonic metric, and you want to look at how big the changes are. When I first used it, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a deeper understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
+Usually, `increase` is used whenever you have a monotonic metric, and you need to look at the changes in time. When I first used it, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a deeper understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
 
 P.S. `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same function. The intuition you'll get from this article can be applied to the other 2 functions.
 
@@ -27,37 +27,43 @@ Which is a vector of tuples, where each tuple has a timestamp and a value. The t
 
 ## Instant vectors
 
-Sometimes you might confuse instant vectors with range vectors. For example, the following is a range vector `counter[5h]`. But `increase(counter[5h])` is an instant vector, which means that it's one value.
+Sometimes you might confuse instant vectors with range vectors. For example, the following is a range vector `counter[5h]`. But `increase(counter[5h])` is an instant vector, which is just one value.
 
-However, when you enter these expressions in Grafana, if you give it a range vector, it will tell you:
+However, when you give a range vector to Grafana, it will tell you:
 > invalid expression type "range vector" for range query, must be Scalar or instant Vector
 
 So, in order to plot something, you need to provide an instant vector to Grafana. But the result will actually be a set of points plotted within a range configured from the Grafana dashboard. That's because Grafana actually queries Prometheus for a range vector.
 
 Wait, so is it that really an instant vector or not? The answer is: the expression you give to Grafana is an instant vector, but before sending the query to Prometheus, it actually selects a range for it (depending on how you configure the dashboard). So, if the dashboard has a plot for the last 3 hours, then the expression `increase(counter[5h])` turns into the query `increase(counter[5h])[3h]`. If you are confused why there are two ranges, you can think of it like a for loop: you query `increase(counter[(rangeEnd-5h, rangeEnd)])` for each step point over the interval of 3 hours by varying the value of `rangeEnd` from `now() - 3h` until `now()`.
 
-It's not relevant for this article the exact query Grafana sends. I just want it to be clear that `increase(v[range])` returns exactly one value. If you want to plot it, you'll need to evaluate it multiple times by shifting the right side of the range across the x-axis of the time plot.
+It's not relevant for this article the exact query Grafana sends. I just want it to be clear that `increase(v[range])` returns exactly one value. If you want to plot it, you'll need to evaluate it multiple times by shifting the endpoints of the range across the x-axis of the time plot.
 
 ## Monotonicity
 
-Let's first clear one of the easier issues when it comes to time series: **counter resets**.
+Let's first clear one known issue when it comes to time series: **counter resets**.
 
 > Breaks in monotonicity (such as counter resets due to target restarts) are automatically adjusted for
 
 How is the adjustment done, exactly?
 
-It means that at some point, you would have $v_{i} > v_{i+1}$. If you just select a range vector that contains this, the corresponding values will be plotted - nothing unexpected. However, when you need to apply some functions to these range vectors, Prometheus will make the following assumption: if a break in monotonicity happens, it means that the counter was reset to 0. In its calculations, it will add an offset every time this happens, to turn the series into a monotonic one.
+A break in monotonocity means that at some point you have $v_{i} > v_{i+1}$. If you just select a range vector that contains this, the corresponding values will be plotted - nothing unexpected. However, when you need to apply some functions to these range vectors, Prometheus will make the following assumption: if a break in monotonicity happens, it means that the counter was reset to 0. In its calculations, it will add an offset every time this happens, to turn the series into a monotonic one.
 
-This means that the new value will be $v_{i+1}' = v_{i} + v_{i+1}$. The offset is $v_{i}$, and it will be added to all the values that follow $v_{i}$. For example, if a drop to 0 happens (i.e. $v_{i+1}$ becomes 0), that sample will actually take the value $v_{i+1}' = v_{i}$, as if no change would've happened.
+This means that the new value will be $v_{i+1}' = v_{i} + v_{i+1}$. The offset is $v_{i}$, and it will be added to all the values that follow $v_{i}$. For example, if a drop to 0 happens (i.e. $v_{i+1}$ becomes 0), that sample will actually take the value $v_{i+1}' = v_{i}$, as if no change would've happened. Additionally, $v_{i+2}' = v_{i+2} + v_{i}$, $v_{i+3}' = v_{i+3} + v_{i}$, and so on.
 
-This only makes sense when our metric is actually a counter, like the documentation of `increase` states:
+This makes sense when our metric is actually a counter, like the documentation of `increase` states:
 > increase should only be used with counters (for both floats and histograms)
 
 Here's a visual example. The following is a counter with resets:
-![Plot of counter that has 2 resets](img/counter_initial.png "A counter with resets")
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of counter that has 2 resets">
+</div>
 
 And here it is how Prometheus will interpret it when fed to the `increase` function:
 ![Plot of the same counter without resets](img/counter_no_resets.png "The same counter without resets")
+
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase320m_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of the same counter without resets">
+</div>
 
 Here's a place in the implementation of the functions [where counter resets are handled](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L243-L248):
 ```go
