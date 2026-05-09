@@ -1,10 +1,10 @@
 # Increase your understanding of Prometheus increase()
 
-This article attempts to explain how the `increase` function of Prometheus works, and how to get an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
+This article attempts to explain how the `increase` function of Prometheus works, and about forming an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
 
-When I first used `increase`, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a better understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
+Usually, `increase` is used whenever you have a monotonic metric, and you want to look at how big the changes are. When I first used it, I thought that it was just a derivative for discrete functions. Which is true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a deeper understanding. This article will help you to get that missing intuition that you need when doing visual analysis on plots based on `increase`.
 
-P.S. `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same functions. A lot of the stuff in here also applies to the other functions.
+P.S. `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same function. The intuition you'll get from this article can be applied to the other 2 functions.
 
 ## RTFM
 
@@ -400,11 +400,13 @@ Here's the same plot where I colored each blip with a different color. You can c
 
 Cool! So, as the blips get wider they start stacking on each other. This shows us an underlying property of `increase`: the function is greater when the range is greater.
 
-Now, back to the previous counter. This is what happens when we increse the range from <> to <>:
+Now, back to the previous counter. This is what happens when we increse the range from 10s to 40s:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase_40s_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
+</div>
 
-INSERT IMAGE HERE
 
-I personally didn't find this too satisfying. All the blips merge at the same time. So, here's a different plot where the gap between the changes is modeled by a quadratic function:
+I personally didn't find that too satisfying. All the blips merge at the same time. So, here's a different plot where the gap between the changes is modeled by a quadratic function:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/counter_generate_counter11.svg" style="width:600px; height:auto;" alt="">
 </div>
@@ -414,5 +416,5 @@ And its 30m `increase`:
     <img src="img/counter_generate_counter11.svg" style="width:600px; height:auto;" alt="">
 </div>
 
-Here's an animation that varies the query range and shows how the blips start stacking on each other:
-[Watch video](img/animation.mp4)
+Here's an animation that varies the query range starting from 10s and shows how the blips start stacking on each other:
+<video src="https://github.com/user-attachments/assets/07445bff-9cb7-4ac9-8c60-59a02f1b838e" controls></video>
