@@ -413,7 +413,7 @@ I personally didn't find that too satisfying. All the blips merge at the same ti
 
 And its 30m `increase`:
 <div style="display:flex; justify-content:flex-start;">
-    <img src="img/counter_generate_counter11.svg" style="width:600px; height:auto;" alt="">
+    <img src="img/increase_generate_counter11.svg" style="width:600px; height:auto;" alt="">
 </div>
 
 Here's an animation that varies the query range starting from 10s and shows how the blips start stacking on each other:
