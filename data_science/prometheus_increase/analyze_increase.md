@@ -417,4 +417,4 @@ And its 30m `increase`:
 </div>
 
 Here's an animation that varies the query range starting from 10s and shows how the blips start stacking on each other:
-<video src="https://github.com/user-attachments/assets/07445bff-9cb7-4ac9-8c60-59a02f1b838e" controls></video>
+<video src="https://github.com/user-attachments/assets/054ebdfd-2e6a-4cdb-b714-84688551a72f" controls></video>
