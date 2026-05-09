@@ -59,13 +59,11 @@ Here's a visual example. The following is a counter with resets:
 </div>
 
 And here it is how Prometheus will interpret it when fed to the `increase` function:
-![Plot of the same counter without resets](img/counter_no_resets.png "The same counter without resets")
-
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/increase320m_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of the same counter without resets">
 </div>
 
-Here's a place in the implementation of the functions [where counter resets are handled](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L243-L248):
+Here's how counter resets are handled [in Prometheus' source code](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L243-L248):
 ```go
     for i, currPoint := range samples.Floats[1:] {
         prevPoint := samples.Floats[i]
@@ -83,11 +81,11 @@ Now, I will explain the following part:
 
 Assuming `range := (rangeStart, rangeEnd)`, then the first selected sample in `v[range]` will be `(t1, v1)`, and `t1 >= rangeStart`. The range doesn't need to match the sampled timestamps exactly, so it is possible to have `t1 > rangeStart`.
 
-As a consequence, instead of looking at `(t1, v1)`, Prometheus generates an extrapolated point `(t1', v1')`, which is extrapolated by assuming that the counter is linear. The points used for extrapolation are `(t1, v1)` and `(tn, vn)`. A similar thing happens for the right side of the interval - instead of using `(tn, vn)`, an extrapolated point `(tn', vn')` is used.
+As a consequence, instead of looking at `(t1, v1)`, Prometheus generates a point `(t1', v1')` that's pretty close to `rangeStart`, which is extrapolated by assuming that the counter is linear. The points used for extrapolation are `(t1, v1)` and `(tn, vn)`. A similar thing happens for the right side of the interval - instead of using `(tn, vn)`, an extrapolated point, `(tn', vn')`, is used.
 
 Usually, `t1' = rangeStart` and `tn' = rangeEnd`, but if these timestamps are too far from the actual ones, then Prometheus does some clipping. However, it is guaranteed that `t1' <= t1` and `tn' >= tn`.
 
-Then `increase` function computes the difference `vn' - v1'` instead of `vn - v1`.
+After the extrapolation, `increase` computes the difference `vn' - v1'` instead of `vn - v1`.
 
 **Disclaimer:** The actual implementation of Prometheus handles some additional cases, and it doesn't explicitly generate `v1'` and `vn'`. It knows from the start that we want the difference between the last and the first sample, so it incorporates the extrapolation formula directly in the final result.
 
@@ -100,12 +98,12 @@ Then `increase` function computes the difference `vn' - v1'` instead of `vn - v1
 
 *Average rate of increase* - if you're not familiar with TSDBs, this might sound ambiguous. Average relative to what? The number of samples? A time-weighted average? After reading [the source code for `extrapolatedRate`](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L188), here's my own definition:
 
-Given a range vector, `rate` computes the net increase divided by the total interval in seconds, which depends on the first and the last sample in the range:
+Given a range vector, `rate` computes the net increase divided by the total interval in seconds. The net increase only depends on the first and last sample in the range:
 ```
 rate(v[range]) = (vn - v1) / (tn - t1)
 ```
 
-Going back to the definition of `increase`:
+Now, we can get a first iteration of the `increase` formula by multiplying with the time range window:
 ```
 Simplified formula: increase(v[range]) = (vn - v1) / (tn - t1) * (rangeEnd - rangeStart)
 ```
@@ -140,9 +138,13 @@ factor = (tn' - t1') / (tn - t1)
 increase(v[range]) = (vn - v1) * factor
 ```
 
-## Building the intuition
+For the rest of this article, I'll assume that `factor = 1`.
 
-Even when you know the formula for `increase`, that's just one point. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples and how to build an intuition about it. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its sweeped increase.
+---
+
+# Building the intuition
+
+Even when you know the mathematical formula for `increase`, that's just one perspective. The real power of `increase` comes when it's sweeped across a range. I'll try to show you some examples, and each example should give you a new perspective. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its sweeped increase.
 
 Here's a cheat sheet with some common patterns:
 <div style="display:flex; justify-content:flex-start;">
@@ -161,7 +163,7 @@ Now that you know the mathematical expression for `increase`, you might already 
 
 This is how a sweeped `increase` works: you fix a time interval, D. You treat your counter plot as an X-Y coordinate plot. You start with two points on the plot whose x values are D seconds appart. You record the difference in the y values. You shift both points by an increment. Then you record the difference again and repeat.
 
-You can imagine those two points at fixed distance moving continuously from one end of the plot to the other. I would've showed you a cool animation but I don't have one (contact me if you want to do it, I'd be happy to include it here).
+You can imagine those two points at fixed distance moving continuously from one end of the plot to the other.
 
 If the sample rate is constant and small, then you'll have a nice property: the `factor` used in the formula will roughly be the same, because the `range` is shifted in both ends, keeping `rangeEnd - rangeStart` constant. Then, looking at the extrapolated timestamps: `t1'` , `tn'`, the difference `tn' - t1'` will be a constant factor of `rangeEnd - rangeStart`. However, this approximation becaomes weaker, the lower the sample rate is.
 
@@ -205,7 +207,7 @@ There's also a mathematical way to compute differences in a similar way `increas
 
 ## The hidden plateau
 
-Cool, so instant changes create the following pattern: instant increase, followed by a plateau whose length depends on the range, then instant decrease.
+Cool, so instant changes create a blip: instant increase, followed by a plateau whose length depends on the range, then instant decrease. Gradual changes also create a sort of a blip.
 
 Let's now look at a gradual change:
 <div style="display:flex; justify-content:flex-start;">
@@ -219,7 +221,7 @@ This is how the increase looks:
 
 Well, I'd say it still looks like a blip: an increase followed by a plateau, followed by a decrease. But the increase is not instant. Actually the slope of the increase is the almost same as the slope of the ascension. It turns out that this is not a coincidence. The math can confirm this.
 
-You can observe that the decrease starts happening when the counter becomes constant. This happens for the same reason the decrease happened in the previous case where we learned about blips. Similarly, it can be shown that the slope of the decrease is the same as the slope of the increase (but reversed).
+You can observe that the decrease starts happening when the counter becomes constant. This happens for the same reason the decrease happened in the previous case where we learned about blips. Similarly, it can be shown that the slope of the decrease is the same as the slope of the increase (but negative).
 
 But, what's the difference from the previous blip: The plateau.
 
@@ -228,7 +230,7 @@ Here's the `increase` plot for the same counter, but with a 60m range, instead o
     <img src="img/increase_60m_generate_slow_increase.svg" style="width:600px; height:auto;" alt="Increase[60m] of counter with a slow change">
 </div>
 
-Do you see the problem? We've previously seen that the length of the plateau was matching the length of the range. But now, the plateau is shorter, despite the fact that we increased the query range?
+Do you see the problem? We've previously seen that the length of the plateau was matching the length of the range. But now, the plateau is shorter, despite the fact that we increased the query range!?
 
 Similarly, if we decrease the range to 10m, we get a longer plateau:
 <div style="display:flex; justify-content:flex-start;">
@@ -237,12 +239,12 @@ Similarly, if we decrease the range to 10m, we get a longer plateau:
 
 On the other hand, the more you increase the range, the longer gets the ascension. It looks like the `increase` plot is trying to look closer like the counter plot.
 
-If you keep increasing the range, the plateau will get smaller and smaller. If you get past that, a new plateau appears. This is how it looks for a 140m range:
+If you keep increasing the range, the plateau will get smaller and smaller, until it disappears. If you get past that, a new plateau appears. This is how it looks for a 140m range:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/increase_140m_generate_slow_increase.svg" style="width:600px; height:auto;" alt="Increase[140m] of counter">
 </div>
 
-And now, it actually increases as we increase the range. But its length is not equal to the range. What actually was happening before was that the `increase` plot was trying to catch up the counter plot. But, because the endpoints of the range were too close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. However, if the range is large enough, the ascension will be preserved in its entirety.
+And now, it actually increases as we increase the range. Our previous intuition applies again, with one exception: the length of the plateau is not equal to the range. What actually was happening before was that the `increase` plot was trying to catch up to the counter plot. But, because the endpoints of the range were too close, the plot was starting to forget its past too fast, and it was never getting to the real plateau. However, if the range is large enough, the ascension will be preserved in its entirety.
 
 In fact, if the range is big enough, then `range length = length of ascension + length of plateau (in increase)`.
 
@@ -269,16 +271,16 @@ The second and third slopes in `increase` are smaller by 1, comapared to the one
 
 This one really depends on the chosen range. If you plugin in the formula and sweep the ends of the range across the counter, you'll see why this happens.
 
-Prepare to go deep now.
+Why do the slopes of `increase` have these particular values? Prepare to go deep now.
 
 Let's take a step back and look again at an instant value in `increase`. Recall the formula `(vn - v1) * factor`. Let's also assume that `factor = 1`. The following plot represents the endpoints of the range with orange circles:
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/fast_increase_instant.svg" style="width:600px; height:auto;" alt="">
 </div>
 
-As you move the 2 endpoints across the counter, you trace the `increase`. If these 2 endpoints stay on the same slopes, the resulting trace in `increase` will be a straight line. The slope of this new line is the difference between the slope on which the right endpoint sits and the slope on which the left endpoint sits. Another way to think about this is that the slope of the `increase` is encoded in its derivative, just like `increase` is kind of the derivative of the counter. Then, the slope of the `increase` could be described by the increase of the increase of the counter.
+As you move the 2 endpoints across the counter, you will trace the `increase`. If each these 2 endpoints keep stayng on the same slopes, the resulting trace in `increase` will be a straight line. The slope of this new line is the difference between the slope on which the right endpoint sits and the slope on which the left endpoint sits. Another way to think about this is that the slope of the `increase` is encoded in its derivative, just like `increase` is kind of the derivative of the counter. Then, the slope of the `increase` could be described by the increase of the increase of the counter.
 
-Why am I telling you this? Because the `increase` changes its slope exactly when one of the endpoints jumps on a new slope. If you're still not convinced, here's the proof:
+Why am I telling you this? Because you can understand exactly when `increase` changes its slope: exactly when one of the endpoints jumps on a new slope. If you're still not convinced, here's the proof:
 
 <div style="display:flex; justify-content:flex-start;">
     <img src="img/proof_slope.svg" style="width:600px; height:auto;" alt="">
@@ -295,7 +297,7 @@ Let (v3, t3) and (v4, t4) be the first and last points in v[range2].
 
 (1) The ranges are chosen such that, always, the left endpoint sits on the first slope (s1) and the right endpoint sits on the second slope (s2).
 
-(2) Assume that the sample rate is constant, and divides d. Then, we can safely assume that t3 - t1 = d and t4 - t2 = d.
+(2) Assume that d = 1, and the sample rate is constant, and a multiple of that. Then, we can safely assume that t3 - t1 = 1 and t4 - t2 = 1. We do this because d cancels out in the formula anyway.
 
 (3) Assume that for both increase(v[range1]) and increase(v[range2]), the factor is 1.
 
@@ -313,11 +315,11 @@ This means:
 (v4 - v2) / (t4 - t2) = s2
 
 From (2):
-(v3 - v1) / d = s1 => v3 - v1 = s1 * d
-(v4 - v2) / d = s2 => v4 - v2 = s2 * d
+(v3 - v1) / 1 = s1 => v3 - v1 = s1
+(v4 - v2) / 1 = s2 => v4 - v2 = s2
 
-S = (increase(v[range2]) - increase(v[range1])) / (t4 - t2) = ((v4 - v3) - (v2 - v1)) / d
-  = ((v4 - v2) - (v3 - v1)) / d = (s2 * d - s1 * d) / d
+S = (increase(v[range2]) - increase(v[range1])) / (t4 - t2) = (v4 - v3) - (v2 - v1)
+  = (v4 - v2) - (v3 - v1)
   = s2 - s1
 
 qed
