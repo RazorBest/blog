@@ -264,7 +264,7 @@ What actually was happening before was that the `increase` plot was trying to ca
 
 However, if the range is large enough, the ascension will be preserved in its entirety. This gives use a useful rule: `range length = length of ascension + length of plateau (in increase)`.
 
-## Fast changes
+## Slopes
 
 Let's now look at a series of quick changes in the slope:
 <div style="display:flex; justify-content:flex-start;">
