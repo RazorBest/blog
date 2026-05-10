@@ -87,7 +87,7 @@ Given `range := (rangeStart, rangeEnd)`, the first selected sample in `v[range]`
 
 As a consequence, instead of looking at `(t1, v1)`, Prometheus generates a point `(t1', v1')` that's "pretty close" to `rangeStart`, which is extrapolated by assuming that the counter is linear. The points used for extrapolation are `(t1, v1)` and `(tn, vn)`. The same logic applies to the right side of the range - instead of using `(tn, vn)`, an extrapolated point, `(tn', vn')`, is used.
 
-Usually, `t1' = rangeStart` and `tn' = rangeEnd`, but if these timestamps are more than one scrape interval away from the actual ones, then Prometheus does some clipping (more details [in the source code](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L469-L472)). However, it is guaranteed that `t1' <= t1` and `tn' >= tn`.
+Usually, `t1' = rangeStart` and `tn' = rangeEnd`, but if these timestamps are more than one scrape interval away from the actual ones, then Prometheus does some clipping (more details [in the source code](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L469-L472)). However, it is guaranteed that `rangeStart <= t1' <= t1` and `tn <= tn' <= rangeEnd`.
 
 After the extrapolation, `increase` computes the difference `vn' - v1'` instead of `vn - v1`.
 
