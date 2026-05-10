@@ -6,6 +6,8 @@ Usually, `increase` is used whenever you have a monotonic metric, and you need t
 
 The `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same function. The intuition you'll get from this article can be applied to the other two functions.
 
+# 1. The theory
+
 ## RTFM?
 
 [The documentation](https://prometheus.io/docs/prometheus/latest/querying/functions/#increase) for the function states:
@@ -150,7 +152,7 @@ For the rest of this article, I'll assume that `factor = 1`.
 
 ---
 
-# Building the intuition
+# 2. Building the intuition
 
 Now that you know the mathematical formula for `increase`, let's apply that. The real power of `increase` comes when it's swept across a range. I'll show you some examples, and each example should give you a new perspective. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its swept increase.
 
@@ -440,3 +442,11 @@ And its 30m `increase`:
 
 Here's an animation that varies the query range starting from 10s and shows how the blips start stacking on each other:
 <video src="https://github.com/user-attachments/assets/054ebdfd-2e6a-4cdb-b714-84688551a72f" controls></video>
+
+## Conclusion
+
+We started our journey by deriving the mathematical formula of `increase`, since the documentation doesn't provide one. We then analyzed some examples, incrementally building a more complete picture. We've seen how the mathematical formula can be viewed as two points sweeping across the plot. I showed you two ways of interpreting a visualization: through blips, and slopes. And finally, I showed that the slopes are just some additive blips.
+
+We've seen that a counter with more frequent changes will generate a bigger `increase`. This can be used to quantify periodic patterns that are present in the time domain, by turning them into signals on the y-axis.
+
+So, `increase` can help us turn frequencies into amplitudes. In the second part of this series, I'll build on this idea to show how we can detect anomalies when it comes to changes in frequency.
