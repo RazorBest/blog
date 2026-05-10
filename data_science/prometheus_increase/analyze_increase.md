@@ -395,7 +395,7 @@ With 140m range:
     <img src="img/blip_meme.jpg" style="width:600px; height:auto;" alt="">
 </div>
 
-I showed you two ways to interpret the plot of `increase`: through blips and through slopes. The blips idea assumed that for each instant change we have a spike in the `increase` plot. And the width of this "spike" depended on the range of the query. The slopes idea treated the counter like a continuous function, and interpreted `increase` as a difference between the slopes in two points in the counter. But in reality, the function was never continuous - it was our interpretation, to make the pllot easier to understand. What happens if we apply the blips interpretation to our previous plot?
+I showed you two ways to interpret the plot of `increase`: through blips and through slopes. The blips idea assumed that for each instant change we have a spike in the `increase` plot. And the width of this "spike" depended on the range of the query. The slopes idea treated the counter like a continuous function, and interpreted `increase` as a difference between the slopes in two points in the counter. But in reality, the function was never continuous - it was our interpretation, to make the plot easier to understand. What happens if we apply the blips interpretation to our previous plot?
 
 We know that the blips become spiky when we make the query range very small. So, let's try a 10s range query. I also multiplied the expression by 10 to make it visible:
 <div style="display:flex; justify-content:flex-start;">
