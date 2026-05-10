@@ -402,7 +402,7 @@ We know that the blips become spiky when we make the query range very small. So,
     <img src="img/increase_10s_generate_fast_increase.svg" style="width:600px; height:auto;" alt="">
 </div>
 
-So, the height of the blips scales with the slopes of the counter. But how do these blips turn into the smoother hill that we see at 30m? To understand this, we'll look at one last example.
+So, the height of the blips scales with the slopes of the counter. But how do these blips turn into the smoother hill that we see at 30m? To understand this, we'll look at another example.
 
 
 Here we have 2 instant changes that are 10 minutes apart followed by 2 instant changes that are 30 minutes apart:
