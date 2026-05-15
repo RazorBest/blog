@@ -10,7 +10,12 @@ The `increase`, `rate` and `delta` are very similar query functions. In fact, th
 
 Prometheus is a Time Series Data Base (TSDB) that is used to collect real-time data as series of numbers. It is usually used with Grafana to visualize this data.
 
-Prometheus organizes its data in **metrics**, and in Grafana, for example, you can plot the value of that a metric over time.
+Prometheus organizes its data in **metrics**, and in Grafana, for example, you can plot the value of that a metric over time. Moreover, you can use PromQL to plot an expression that uses one or more metrics.
+
+A common function in PromQL is `increase`. Look at an example:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase1.png" style="width:60%; height:auto;" alt="Increase cheat sheet">
+</div>
 
 ## RTFM?
 
