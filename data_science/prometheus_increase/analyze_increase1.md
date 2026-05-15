@@ -1,12 +1,16 @@
 # Increase your understanding of Prometheus increase()
 
-This article attempts to explain how the `increase` function of Prometheus works, and how to form an intuition about it when analyzing a plot. This is the first chapter of a 2-part series about using `increase` for anomaly detection.
+In Prometheus, `increase` is usually used whenever you have a monotonic metric, and you need to look at the changes over time. When I first used it, I thought that it was just a derivative for discrete functions. Altough true, the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions wasn't enough to help me understand the visuals. This article will help you to get the missing intuition you need when doing visual analysis on plots based on `increase`.
 
-Usually, `increase` is used whenever you have a monotonic metric, and you need to look at the changes over time. When I first used it, I thought that it was just a derivative for discrete functions. That's true, but the hard part came when I had to interpret some Grafana plots that were using `increase`. My intuition about derivatives of continuous functions didn't really help me have a deeper understanding. This article will help you to get the missing intuition you need when doing visual analysis on plots based on `increase`.
+I'll first show you the mathematical formula of `increase`. Then, we'll go through some visual examples and analyze them in detail.
 
 The `increase`, `rate` and `delta` are very similar query functions. In fact, the golang source code implements all 3 of them using the same function. The intuition you'll get from this article can be applied to the other two functions.
 
 # 1. The theory
+
+Prometheus is a Time Series Data Base (TSDB) that is used to collect real-time data as series of numbers. It is usually used with Grafana to visualize this data.
+
+Prometheus organizes its data in **metrics**, and in Grafana, for example, you can plot the value of that a metric over time.
 
 ## RTFM?
 
@@ -26,57 +30,6 @@ One of the types commonly used for time series is a range vector:
 v[range] = (t1, v1), (t2, v2), (t3, v3), ..., (tn, vn)
 ```
 a vector of tuples where each tuple has a timestamp and a value. The timestamps are increasing. The range is a selector represented by an interval defined by `rangeStart` and `rangeEnd`, and selects all the values in the vector whose timestamps are in that interval: `rangeStart <= ti <= rangeEnd`. In practice, the range is specified by a duration, and `rangeEnd` is assumed to be the current time. For example, `v[5h]` selects an interval defined by `rangeEnd = now()` and `rangeStart = rangeEnd - 5h`.
-
-## Instant vectors
-
-Sometimes you might confuse instant vectors with range vectors. For example, this is a range vector: `counter[5h]`. But `increase(counter[5h])` is an instant vector, which is just a single value.
-
-However, when you give a range vector to Grafana, it will tell you:
-> invalid expression type "range vector" for range query, must be Scalar or instant Vector
-
-So, in order to plot something, you need to provide an instant vector to Grafana. But the result will actually be a set of points plotted within a range configured from the Grafana dashboard. That's because Grafana actually queries Prometheus for a range vector.
-
-Wait, so is it really an instant vector or not? The answer is: the expression you give to Grafana is an instant vector, but before sending the query to Prometheus, it actually selects a range for it (depending on how you configure the dashboard). So, if the dashboard has a plot for the last 3 hours, then the expression `increase(counter[5h])` turns into the query `increase(counter[5h])[3h]`. If you are confused why there are two ranges, you can think of it like a for loop: you query `increase(counter[(rangeEnd-5h, rangeEnd)])` for each step point over the interval of 3 hours by varying the value of `rangeEnd` from `now() - 3h` until `now()`.
-
-Nevertheless, the exact query Grafana sends is not relevant for this article. I just want it to be clear that `increase(v[range])` returns exactly one value. If you want to plot it, you'll need to evaluate it multiple times by shifting the endpoints of the range across the x-axis of the time plot.
-
-## Monotonicity
-
-Let's first clear one known issue when it comes to time series: **counter resets**.
-
-> Breaks in monotonicity (such as counter resets due to target restarts) are automatically adjusted for
-
-How is the adjustment done, exactly?
-
-A break in monotonicity means that at some point you have $v_{i} > v_{i+1}$. If you just select a range vector that contains this, the corresponding values will be plotted - nothing unexpected. However, when you need to apply some functions to these range vectors, Prometheus will make the following assumption: if a break in monotonicity happens, it means that the counter was reset to 0. In its calculations, it will add an offset every time this happens to turn the series into a monotonic one.
-
-This means that the new value will be $v_{i+1}' = v_{i} + v_{i+1}$. The offset is $v_{i}$, and it will be added to all the values that follow $v_{i}$. For example, if a drop to 0 happens (i.e. $v_{i+1}$ becomes 0), that sample will actually take the value $v_{i+1}' = v_{i}$, as if no change had happened. Additionally, $v_{i+2}' = v_{i+2} + v_{i}$, $v_{i+3}' = v_{i+3} + v_{i}$, and so on.
-
-This makes sense when our metric is actually a counter, like the documentation of `increase` states:
-> increase should only be used with counters (for both floats and histograms)
-
-Here's a visual example. The following is a counter with resets:
-<div style="display:flex; justify-content:flex-start;">
-    <img src="img/counter_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of counter that has 2 resets">
-</div>
-
-Here it is how Prometheus will interpret it when fed to the `increase` function:
-<div style="display:flex; justify-content:flex-start;">
-    <img src="img/increase320m_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of the same counter without resets">
-</div>
-
-For reference, here's how counter resets are handled [in Prometheus' source code](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L243-L248):
-```go
-    for i, currPoint := range samples.Floats[1:] {
-        prevPoint := samples.Floats[i]
-        if currPoint.F < prevPoint.F || (i+1 < len(startTimestamps) && isStartTimestampReset(startTimestamps[i], prevPoint.T, startTimestamps[i+1], currPoint.T)) {
-            resultFloat += prevPoint.F
-        }
-    }
-```
-
-For the rest of the article, we'll assume no resets occur.
-
 
 ## Extrapolation
 
@@ -155,6 +108,8 @@ For the rest of this article, I'll assume that `factor = 1`.
 # 2. Building the intuition
 
 Now that you know the mathematical formula for `increase`, let's apply that. The real power of `increase` comes when it's swept across a range. I'll show you some examples, and each example should give you a new perspective. Hopefully, after reading this, you will be able to imagine how a counter might look, given the plot of its swept increase.
+
+Altough resets can happen, I won't show examples that contain resets, [and I explained at the end why](#monotonicity).
 
 Here's a cheat sheet with some common patterns:
 <div style="display:flex; justify-content:flex-start;">
@@ -450,3 +405,36 @@ We started our journey by deriving the mathematical formula of `increase`, since
 We've seen that a counter with more frequent changes will generate a bigger `increase`. This can be used to quantify periodic patterns that are present in the time domain, by turning them into signals on the y-axis.
 
 So, `increase` can help us turn frequencies into amplitudes. In the second part of this series, I'll build on this idea to show how we can detect anomalies when it comes to changes in frequency.
+
+# Appendix
+
+## Monotonicity
+
+This article didn't talk about counter resets. That's because whenever they happen, `increase` doesn't give you any additional information about that. Resets are treated as they never happened. But, if you're still curious, I wrote this section to clarify how the adjustment is done when `increase` is calculated.
+
+A break in monotonicity means that at some point you have $v_{i} > v_{i+1}$. If you just select a range vector that contains this, the corresponding values will be plotted - nothing unexpected. However, when you need to apply some functions to these range vectors, Prometheus will make the following assumption: if a break in monotonicity happens, it means that the counter was reset to 0. In its calculations, it will add an offset every time this happens to turn the series into a monotonic one.
+
+This means that the new value will be $v_{i+1}' = v_{i} + v_{i+1}$. The offset is $v_{i}$, and it will be added to all the values that follow $v_{i}$. For example, if a drop to 0 happens (i.e. $v_{i+1}$ becomes 0), that sample will actually take the value $v_{i+1}' = v_{i}$, as if no change had happened. Additionally, $v_{i+2}' = v_{i+2} + v_{i}$, $v_{i+3}' = v_{i+3} + v_{i}$, and so on.
+
+This makes sense when our metric is actually a counter, like the documentation of `increase` states:
+> increase should only be used with counters (for both floats and histograms)
+
+Here's a visual example. The following is a counter with resets:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/counter_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of counter that has 2 resets">
+</div>
+
+Here it is how Prometheus will interpret it when fed to the `increase` function:
+<div style="display:flex; justify-content:flex-start;">
+    <img src="img/increase320m_generate_counter6.svg" style="width:60%; height:auto;" alt="Plot of the same counter without resets">
+</div>
+
+For reference, here's how counter resets are handled [in Prometheus' source code](https://github.com/prometheus/prometheus/blob/9c23509790a38e4f5ec38b0c60c91d2a4fb45bd0/promql/functions.go#L243-L248):
+```go
+    for i, currPoint := range samples.Floats[1:] {
+        prevPoint := samples.Floats[i]
+        if currPoint.F < prevPoint.F || (i+1 < len(startTimestamps) && isStartTimestampReset(startTimestamps[i], prevPoint.T, startTimestamps[i+1], currPoint.T)) {
+            resultFloat += prevPoint.F
+        }
+    }
+```
