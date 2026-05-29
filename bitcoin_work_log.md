@@ -44,6 +44,7 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 ## Reviews for peer-observer
 - 22.05.2026 - https://github.com/peer-observer/peer-observer/pull/438
 - 22.05.2026 - https://github.com/peer-observer/peer-observer/pull/418
+- 29.05.2026 - https://github.com/peer-observer/peer-observer/pull/420
 
 ## BIP-324 analysis (my personal project)
 - 24.05.2026 - Reviewed https://github.com/RazorBest/bip324-mitm/pull/10
