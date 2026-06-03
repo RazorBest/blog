@@ -49,3 +49,8 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 ## BIP-324 analysis (my personal project)
 - 24.05.2026 - Reviewed https://github.com/RazorBest/bip324-mitm/pull/10
 - 28.05.2026 - Reviewed https://github.com/RazorBest/bip324-mitm/pull/10
+
+# June 2026
+
+# PRs
+- Fixed a bug in nfq-rs at the netlink layer: https://github.com/nbdd0121/nfq-rs/pull/18
