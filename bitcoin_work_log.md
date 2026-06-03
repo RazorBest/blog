@@ -53,4 +53,4 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 # June 2026
 
 # PRs
-- Fixed a bug in nfq-rs at the netlink layer: https://github.com/nbdd0121/nfq-rs/pull/18
+- Fixed a bug in nfq-rs at the netlink layer that was causing modified packets to be dropped if intercepted at INPUT: https://github.com/nbdd0121/nfq-rs/pull/18
