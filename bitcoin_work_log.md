@@ -52,5 +52,30 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 # June 2026
 
-# PRs
+# Work
 - Fixed a bug in nfq-rs at the netlink layer that was causing modified packets to be dropped if intercepted at INPUT: https://github.com/nbdd0121/nfq-rs/pull/18
+- Provided some data analysis for generic anomaly detection for peer observer. Plotted mean and standard deviation for various windows, for data sampled from demo.peer.observer and implemented a simple algorihtm for choosing the best window: https://github.com/peer-observer/peer-observer/issues/304#issuecomment-4772838037.
+
+## Reviews for peer-observer
+09.06.2026 - https://github.com/peer-observer/peer-observer/pull/418
+
+## BIP-324 analysis (my personal project)
+- 06.06.2026 - Merged https://github.com/RazorBest/bip324-mitm/pull/10 (credits to @muchai254)
+- 17.06.2026 - Improved bip324-mitm: https://github.com/RazorBest/bip324-mitm/pull/19
+    - Added a full working example that performs a MitM between two Bitcoin nodes using nfq-rs
+    - Added `examples/test_bip324.rs`, that showcases the bi324 protocol parser, separately from the mitm library
+    - Added `UserPacketRelay` in `relay.rs` (including related structures), so users of the library can actually see the packets. This one is read-only.
+    - Added tests for the user packet relay (`mitmbip324_component_tests`)
+    - `FakePeerRelay` now uses `remove_first_packet_if_empty()` when pushing packets, to clear the queue. Before, it was using `remove_first_packet_if_consumed()`, which included the additional condition that the packet should not be the last one in the queue. This was leftover logic from a previous implementation.
+    - Added tests `test_client_sends_one_message_after_terminator` and `test_server_sends_one_message_after_terminator`.
+    - Added `BIP324Mitm::ensure_terminator_not_split`, which assumes that the user of the library will not push the terminator by parts. This is useful when the user wants that, for each byte pushed to the mitm, one byte should be immediately available for pulling. The garbage terminator is a special case, because the mitm needs to replace the real terminators with its own ones, while also preserving the original garbage. This means that, theoretically, the mitm doesn't know if the last 15 bytes of the garbage phase are part of the garbage or the terminator. It has to receive another byte to confirm that.
+    - Fixed the calculation of boundaries when moving garbage from buffers to buffers in `src/bip324/mod.rs`.
+    - Added `bip324::test_util::WriteParser` and `bip324::test_util::ReadParser` that combine the handshake and data phases into one interface. Currently, it's only used for testing, but it's solves part of https://github.com/RazorBest/bip324-mitm/issues/14.
+    - Added MIT license
+- 29.06.2026 - Reviewed and merged: https://github.com/RazorBest/bip324-mitm/pull/22 (credits to @ajlrza)
+
+
+# July 2026
+
+## BIP-324 analysis (my personal project)
+- 06.07.2026 - Started a first iteration of `snarf-rs`, a helper library for packet interception that should help implementing the bip324 interceptor: https://github.com/RazorBest/snarf-rs/pull/1
