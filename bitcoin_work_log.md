@@ -79,3 +79,7 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 ## BIP-324 analysis (my personal project)
 - 06.07.2026 - Started a first iteration of `snarf-rs`, a helper library for packet interception that should help implementing the bip324 interceptor: https://github.com/RazorBest/snarf-rs/pull/1
+- 21.07.2026 - [Finished](https://github.com/RazorBest/snarf-rs/pull/1) the first iteration of `snarf-rs`.
+    - I designed a generic API for network packet interception that lets you insert interceptors at different layers in the stack
+    - I implemented and tested a TCP helper layer for out-of-order packets
+    - Next step would be to implement a better Seq Indexed Ring Buffer, than will be used by the interceptor.
