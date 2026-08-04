@@ -83,3 +83,6 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
     - I designed a generic API for network packet interception that lets you insert interceptors at different layers in the stack
     - I implemented and tested a TCP helper layer for out-of-order packets
     - Next step would be to implement a better Seq Indexed Ring Buffer, than will be used by the interceptor.
+
+# August 2026
+- 04.08.2026 - Reviewed https://github.com/rust-pcap/pcap/pull/399
