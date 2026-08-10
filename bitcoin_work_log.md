@@ -85,4 +85,11 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
     - Next step would be to implement a better Seq Indexed Ring Buffer, than will be used by the interceptor.
 
 # August 2026
+
+## BIP-324 analysis (my personal project)
+- 08.08.2026 - Improvements session 2 for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/8 (A lot of small feats and fixes)
+- 09.08.2026 - Add byte by byte access to the decrypted packets: https://github.com/RazorBest/bip324-mitm/pull/27
+
+## Other
 - 04.08.2026 - Reviewed https://github.com/rust-pcap/pcap/pull/399
+
