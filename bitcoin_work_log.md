@@ -89,7 +89,13 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 ## BIP-324 analysis (my personal project)
 - 08.08.2026 - Improvements session 2 for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/8 (A lot of small feats and fixes)
 - 09.08.2026 - Add byte by byte access to the decrypted packets: https://github.com/RazorBest/bip324-mitm/pull/27
+- 13.08.2026 - Improvements session 3 for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/9
+- 14.08.2026 - Handle the RST TCP flag for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/10
 
 ## Other
 - 04.08.2026 - Reviewed https://github.com/rust-pcap/pcap/pull/399
 
+# September 2026
+
+## Other
+- 09.09.2026 - Created satsmonitor.org, a monitoring service for RoboSats: https://github.com/RazorBest/robosats-monitor
