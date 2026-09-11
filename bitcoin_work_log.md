@@ -97,5 +97,8 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 # September 2026
 
+## BIP-324 analysis (my personal project)
+- 11.09.2026 - Allow RST flag in more cases and improvements at the TCP layer for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/13
+
 ## Other
 - 09.09.2026 - Created satsmonitor.org, a monitoring service for RoboSats: https://github.com/RazorBest/robosats-monitor
