@@ -99,6 +99,7 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 ## BIP-324 analysis (my personal project)
 - 11.09.2026 - Allow RST flag in more cases and improvements at the TCP layer for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/13
+- 19.09.2026 - Implement terminator pushing into garbage with the prefix replace trick (`bip324-mitm`): https://github.com/RazorBest/bip324-mitm/pull/29
 
 ## Other
 - 09.09.2026 - Created satsmonitor.org, a monitoring service for RoboSats: https://github.com/RazorBest/robosats-monitor
