@@ -100,6 +100,8 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 ## BIP-324 analysis (my personal project)
 - 11.09.2026 - Allow RST flag in more cases and improvements at the TCP layer for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/13
 - 19.09.2026 - Implement terminator pushing into garbage with the prefix replace trick (`bip324-mitm`): https://github.com/RazorBest/bip324-mitm/pull/29
+- 24.09.2026 - Correctly set the AAD after the handshake when 'skip_terminator' mode is enabled (`bip324-mitm`): https://github.com/RazorBest/bip324-mitm/pull/30
+- 24.09.2026 - Properly handle out of order empty FIN for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/17
 
 ## Other
 - 09.09.2026 - Created satsmonitor.org, a monitoring service for RoboSats: https://github.com/RazorBest/robosats-monitor
