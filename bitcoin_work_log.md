@@ -105,3 +105,8 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 ## Other
 - 09.09.2026 - Created satsmonitor.org, a monitoring service for RoboSats: https://github.com/RazorBest/robosats-monitor
+
+# November 2026
+
+# BIP-324 analysis (my personal project)
+- 01.11.2026 - Improve tcp state tracking for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/18
