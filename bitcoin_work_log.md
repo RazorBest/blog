@@ -110,3 +110,7 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 
 # BIP-324 analysis (my personal project)
 - 01.11.2026 - Improve tcp state tracking for `snarf-rs`: https://github.com/RazorBest/snarf-rs/pull/18
+- 01.11.2026 - Rename `snarf-rs` to `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/19
+- 05.11.2026 - Release the bip324-decryptor: https://github.com/RazorBest/bip324-decryptor
+    - This combines the bip324-mitm and slapp-rs libraries into a CLI that generates original pcap alongside decrypted pcap files
+- 06.11.2026 - Move nfq related implementation in a separate source file, in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/22
