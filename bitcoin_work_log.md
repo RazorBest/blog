@@ -114,4 +114,7 @@ For bip324-mitm, there are two goals. First, to merge the current PR that separa
 - 05.11.2026 - Release the bip324-decryptor: https://github.com/RazorBest/bip324-decryptor
     - This combines the bip324-mitm and slapp-rs libraries into a CLI that generates original pcap alongside decrypted pcap files
 - 06.11.2026 - Move nfq related implementation in a separate source file, in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/22
-- 06.11.2026 - Make etherparse only a dev dependency in `slapp-rs` - #23 https://github.com/RazorBest/slapp-rs/pull/23
+- 06.11.2026 - Make etherparse only a dev dependency in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/23
+- 09.11.2026 - Handle SEQ wrap around correctly in the TcpPeerTracker in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/24
+- 09.11.2026 - Add SlappInmemoryNet, a virtual interceptor in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/26
+- 09.11.2026 - Add integration tests that replay from pcap files in `slapp-rs`: https://github.com/RazorBest/slapp-rs/pull/28
